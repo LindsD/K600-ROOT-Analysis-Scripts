@@ -1,4 +1,6 @@
-{
+{ //This script subtracts the two background components from the Excitation Energy spectrum created in the analysis procedure. Be sure to change the Y limits to the appropriate values for your analysis. 
+ 
+ 
 gStyle->SetPalette(1,0);
 
 c1 = new TCanvas("c1","c1",800,10,1000,600);
@@ -58,6 +60,8 @@ hExbacktot->Draw("same");
 
 
 //==============================================
+// Uncomment the following to obtain double differential cross sections 
+ /* 
 TH1F *hExCs = new TH1F("hExCs","^{150}Sm Cross-section Excitation energy",3100,-1.,30.);
 hExCs->Add(hExdiff);
 hExCs->GetXaxis()->SetTitle("E_{x} (MeV)");
@@ -69,7 +73,7 @@ hExCs->GetYaxis()->CenterTitle(true);
 SA = 3.48; // msr  
 cii = 8062253; 
 tgtthick = 3.76; // mg/cm^2 
-A=62;
+A=150;
 e=1.60217733;
 eff=0.7063;
 range=6;
@@ -91,13 +95,14 @@ hExCs->Scale(1000/norm);
 hExCs->Draw();
 
 //==================================================
+*/
 
 //TH1F *hExSm150 = new TH1F("hExSm150","Excitation energy",3100,-1.,30.);
 //hExSm150 = hExdiff;
 
 //Output a data file in PWD
 
-
+/*
  ofstream out;
   out.open("datafile-150Sm-ExCs-pExCalib");
 
@@ -110,7 +115,7 @@ hExCs->Draw();
   }
 
   out.close();
-
+*/
 }
 
 
