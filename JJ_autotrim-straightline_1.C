@@ -1,26 +1,27 @@
 // JJvZyl - Jan 2011 
-//
+
 // JJ's code to 'autotrim' the TDCs and create a CableLength file. (RN comment)
-//
-// This code reads all the TDC channels (TDCchan_***) from a specified group of runfiles,
-// calculates their first derivative, and determines the bin number of the minimum gradient
-//
-// The first 5 lines must be specified...
-// Choose to draw a single TDC channel histo for diagnosis - set flag==1, else set flag=2
-//
+
+// This code reads all the TDC channels (TDCchan_***) from a specified group of runfiles, calculates their first derivative, and determines the bin number of the minimum gradient
+
+// The first 5 lines must be specified.
+// Choose to draw a single TDC channel histogram for diagnosis then set flag==1, else set flag=2
+
+// Edited on 3 December 2024 by LMD and RN to suit PR373 analysis (see lines 156 and 157). 
+
 {
   ofstream outpfile;
 
-  Int_t run_no[]={1084,1087,1088,1092,1093};  
+  Int_t run_no[]={110,113,114,118,121,122,123,124,126,128,129,130,131,132,133,144,147,152,153,155,156,159,161,162,164,165,166,167,169,170,171,172,173,176,177}; 
+  
   Int_t nrofruns=sizeof(run_no)/sizeof(run_no[0]);  
   Int_t binave  = 50;	// # bins to average over - ideally to give smooth curve: ~50 bins
   Int_t bingrad = 20;	// # bins to calc gradient - ideally > small noise and < large peaks, ~30 bins
   Int_t binsm   = 50;	// # bins to smooth gradient curve for minimum calc - ideally ~20 
 
-  Int_t t0corr=8000;		// Corrected bin number for cable length shift
-  Int_t nbins=14999;		// Bin size of TDCchan histos
-  Int_t xnumbins,xminbin=4000,xmaxbin=7000;	// Plot range for zoomed histo
-  //Int_t xnumbins,xminbin=5000,xmaxbin=9000;	// Plot range for zoomed histo
+  Int_t t0corr=5000;		        // Corrected bin number for cable length shift
+  const int nbins=14999;		// Bin size of TDCchan histo
+  Int_t xnumbins,xminbin=-500,xmaxbin=3000;	// Plot range for zoomed histo
   Int_t tmin,tmax, ti, tf, i, j, k, histI;
   Int_t sum, flag, histImin, histImax, binp ,binm, numTDC;
   Float_t sumf, avei, avef, gradmin,gradmax, gradsm, grad, gradtemp1[nbins],gradtemp2[nbins],scale;
@@ -31,22 +32,20 @@
 		// flag=2 for ALL TDC chans + plotted during analysis
   		// flag=3 for ALL TDC chans + added TDC's written to output .root file
   		// flag=4 for ALL TDC chans, BUT no histos will be plotted during analysis
-  histImin=0;
-  histImax=895;		// 420 for VDC 1 alone; set to 896 for both VDC 1 and 2
-
-  //histImin=656;
-  //histImax=671;		// 420 for VDC 1 alone; set to 896 for both VDC 1 and 2
+  histImin=0;			
+  histImax=895;
+  //  histImax=895;		// 420 for VDC 1 alone; set to 896 for both VDC 1 and 2
 
   if(flag==1) {
-	histImin=655;	//specify single TDC chan number
+	histImin=80;	//specify single TDC chan number
 	histImax=histImin;
   }  
 
   xnumbins=xmaxbin-xminbin;  
-  TH1F *h_TDCadd[histImax+1];
+  TH1F *h_TDCadd[896];
   TH1F *h_ave = new TH1F("ave","Average",nbins,0,nbins);
   TH1F *h_grad = new TH1F("grad","Gradient",nbins,0,nbins);
-  TH1F *hzoom = new TH1F("hzoom","Added TDC histo's (zoomed in)",xnumbins,xminbin,xmaxbin);
+  TH1F *hzoom = new TH1F("hzoom","Added TDC histos (zoomed in)",xnumbins,xminbin,xmaxbin);
 
   if(flag!=1) outpfile.open("CableLengthtmp.dat");
   TFile *arrayoutf = new TFile("TDCarrays.root", "RECREATE"); 
@@ -64,11 +63,12 @@
       cout << "TDC chan #: " << histI <<endl; 
       sprintf(nameTDC,"TDCadd_%d",histI);
       h_TDCadd[histI] = new TH1F(nameTDC,"Added TDC channel",nbins,0,nbins);
+
 //*******************************************************
 // Loop over each of the run files...
 //*******************************************************
       for(Int_t r=0;r<nrofruns;r++) {
-          sprintf(namerun,"~/K600/DATA/PR217/autotrim-run0%d.root",run_no[r]);
+          sprintf(namerun,"/home/lmdonaldson/K600/Data/PR373/ROOT/autotrim-run00%d.root",run_no[r]);
           if(flag==1) cout << "run #: "<<run_no[r] <<endl;
 	  TFile *runfile = TFile::Open(namerun);
 	  //runfile->cd("A_TDCdata");	// Subdirectory created in my f-plane.c code
@@ -80,6 +80,7 @@
 	  arrayoutf->cd();	// Write added TDC histos to root file...and next line
 	  h_TDCadd[histI]->Write();
       }
+
 //***********************************************************************
 // Averaging raw TDC data, calc 1st derivative; fill histogram h_ave....
 //***********************************************************************
@@ -92,6 +93,7 @@
 	  gradtemp1[i]=grad;			// Raw derivative array
 	  if(flag!=4) h_ave->SetBinContent(i-bingrad/2,avei);
       }
+
 //*************************************************************************
 // Smooth raw derivative, fill histogram h_grad, find min/max gradient....
 //*************************************************************************
@@ -126,6 +128,7 @@
           h_TDCadd[histI]->SetLineColor(2);
           //RN h_TDCadd[histI]->Draw("same");
       }
+
 //*****************************************************************************
 // Drawing single TDC channel diagnostic histos - if flag=1
 //*****************************************************************************
@@ -148,14 +151,17 @@
   	  legend2->AddText(text2);
   	  legend2->Draw();
 	  //c1->Update();
+
 //----------------------addition by Retief------------------------------------------
 	  //if ((h_ave->GetMean()!=0) || (h_ave->GetMean()>1000)  ){
-	  if ((h_ave->GetMean()>1000)  ){
+	  //LMD: Note that this mean value needs to change to 100 or so from 1000 for this analysis since some channels do not have a lot of events
+	  
+	  if ((h_ave->GetMean()>100)  ){
 
             h_ave->Fit("pol1","","",tmin-20,tmin+20);
 
             h_ave->GetFunction("pol1")->SetLineColor(3);
-            h_ave->GetFunction("pol1")->SetLineWidth(3.4);
+            h_ave->GetFunction("pol1")->SetLineWidth(3);
 	    slope = h_ave->GetFunction("pol1")->GetParameter(1);
 	    offset = h_ave->GetFunction("pol1")->GetParameter(0);
 

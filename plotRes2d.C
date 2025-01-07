@@ -1,8 +1,8 @@
 {
 
-// This script is used to assess whether LUT offsets are necessary and gives an idea of how much theoffsets should be. Run this script and then compare with the K600 user manual to see whether offsets are necessary.
+// This script is used to assess whether LUT offsets are necessary and gives an idea of how much the LUT offsets should be. Run the histos.C script and then this script compare with the K600 user manual to see whether offsets are necessary.
 
-// NB! Please ensure that your histos.C file is set to look at the correct tof region!! More recent experiments have tof ranges that are much lower than the older experiments. You should know that you're not looking at the right region if you try to plot pad1:tof and see no data in the histogram that's created. 
+// NB! Please ensure that your histos.C file is set to look at the correct TOF region ssince this can change depending on the experiment!! More recent experiments have TOF ranges that are much lower than the older experiments. You should know that you are not looking at the right region if you try to plot pad1:tof and see no data in the histogram that's created. 
 
   //gROOT->Reset();
 
@@ -17,7 +17,9 @@
 
 // The below limits are rough estimates and are obtained by looking at the pad1:tof spectrum and limiting the region to your region of interest. It is important that the LUT offsets are determined for the particles of interest only so you must check that these values match the data you have. If not, change them for your specific case. 
 
-TCut CUTbasic = "tof>4980 && tof<5038 && pad1>402 && pad1<912 && X1pos>20";
+// PR373 - 58Ni(p,d), E_p = 66 MeV
+
+TCut CUTbasic = "tof>-390 && tof<-295 && pad1>1300 && pad1<1950";
 
 pad2->cd(1);
 DATA->Draw("X1res1:X1res0>>hX1Res2d",CUTbasic,"col");

@@ -1,23 +1,15 @@
+// Histograms for Analysis of PR373 - Note that the TOF regions have been changed specifically for this case. Be sure that they are set according to your experiment before using this script.  
+
 #include <TH1.h>
 #include <TH2.h>
 #include <TCutG.h>
 
 void histos()
 {
-// TCanvas *MyCanvas = new TCanvas();
-// gStyle->SetOptLogz(Int_t logz = 1);
-// gStyle->SetOptLogy(Int_t logy = 0);
-// gStyle->SetPalette(1,0);
-// MyCanvas ->Divide(1,1);
-// MyCanvas->cd(1);
-// gPad->SetFillColor(0);
-
-//gStyle->SetPalette(1,0);
-//gStyle->SetOptStat(1110111);
 
 // BASICS: Create 1 dimensional histograms
 TH1F *hpr = new TH1F("hpr","Pattern Register",20,0.,20.);
-TH1F *htof = new TH1F("htof","Time of Flight",1000,4500.,5500.);
+TH1F *htof = new TH1F("htof","Time of Flight",800,-600.,200.);
 TH1F *hpad1 = new TH1F("hpad1","Paddle 1",700,100.,1500.);
 TH1F *hpad2 = new TH1F("hpad2","Paddle 2",550,100.,1200.);
 TH1F *hpad3 = new TH1F("hpad3","Paddle 3",1024,0.,4096.);
@@ -101,18 +93,20 @@ TH1F *hdt = new TH1F("hdt","drifttime",3000,0.,15000.);
 
 // 2 dimensional histogram definitions
 
-TH2F *hpad1vstof = new TH2F("hpad1vstof","Scint 1 vs time of flight",1500,4000.,5500.,2000,0.,4000.);
+TH2F *hpad1vstof = new TH2F("hpad1vstof","Scint 1 vs time of flight",1000,-800.,200.,2000,0.,4000.);
 TH2F *hpad1vstoftdc2 = new TH2F("hpad1vstoftdc2","Scint 1 vs time of flight: TDC2",1500,3500.,5000.,2000,0.,4000.);
 TH2F *hpad1vstoftdc3 = new TH2F("hpad1vstoftdc3","Scint 1 vs time of flight: TDC3",1500,3500.,5000.,2000,0.,4000.);
 TH2F *hpad1vstoftdc4 = new TH2F("hpad1vstoftdc4","Scint 1 vs time of flight: TDC4",1500,3500.,5000.,2000,0.,4000.);
 TH2F *hpad1vstoftdc5 = new TH2F("hpad1vstoftdc5","Scint 1 vs time of flight: TDC5",1500,3500.,5000.,2000,0.,4000.);
 TH2F *hpad1vstoftdc6 = new TH2F("hpad1vstoftdc6","Scint 1 vs time of flight: TDC6",1500,3500.,5000.,2000,0.,4000.);
 TH2F *hpad1vstoftdc7 = new TH2F("hpad1vstoftdc7","Scint 1 vs time of flight: TDC7",1500,3500.,5000.,2000,0.,4000.);
-TH2F *hpad2vstof = new TH2F("hpad2vstof","Scint 2 vs time of flight",1500,4000.,5500.,2000,0.,4000.);
+TH2F *hpad2vstof = new TH2F("hpad2vstof","Scint 2 vs time of flight",1000,-800.,200.,2000,0.,4000.);
 TH2F *hpad1vspad2 = new TH2F("hpad1vspad2","Scint 1 vs Scint 2",800,0.,4000.,800,0.,4000.);
 TH2F *hpad1vspad3 = new TH2F("hpad1vspad3","Scint 1 vs Scint 3",800,0.,4000.,800,0.,4000.);
 
-TH2F *htofvsX1 = new TH2F("htofvsX1","time of flight vs X position",1600,0.,800.,400,4800.,5200.);
+TH2F *htofvsX1 = new TH2F("htofvsX1","time of flight vs X position",1600,0.,800.,1000,-800.,200.);
+TH2F *htofvsX2 = new TH2F("htofvsX2","time of flight vs X2 position",1600,0.,800.,1000,-800.,200.);
+TH2F *htofvsThSCAT = new TH2F("htofvsThSCAT","time of flight vs scattering theta",600,-3.,3.,1000,-800.,200.);
 TH2F *hpadvsX1 = new TH2F("hpadvsX1","pad vs X",1600,0.,800.,1000,0.,4000.);
 
 TH2F *hThFPvsX1 = new TH2F("hThFPvsX1","Focal Plane Theta vs X position",3200,0.,800.,600,20.,50.);
@@ -120,7 +114,7 @@ TH2F *hThFPvstof = new TH2F("hThFPvstof","ThFP vs tof",600,5100.,5700.,250,25.,5
 TH2F *hThFPvstof2 = new TH2F("hThFPvstof2","ThFP vs tof",600,5100.,5700.,250,25.,50.);
 
 TH2F *hY1vsX1 = new TH2F("hY1vsX1","Y1 vs X1",2400,0.,800.,280,-70.,70.);
-TH2F *hY2vsX1 = new TH2F("hY2vsX1","Y2 vs X1",2400,0.,800.,280,-70.,70.);
+TH2F *hY2vsX2 = new TH2F("hY2vsX2","Y2 vs X2",2400,0.,800.,280,-70.,70.);
 TH2F *hY1vsY2 = new TH2F("hY1vsY2","Y1 vs Y2",480,-60.,60.,480,-60.,60.);
 TH2F *hY1vsThFP = new TH2F("hY1vsThFP","Y vs Theta Focal Plane",1000,10.,60.,480,-60.,60.);
 TH2F *hY1vsThSCAT = new TH2F("hY1vsThSCAT","Y vs Theta_scat ",1000,-5.,5.,480,-60.,60.);
@@ -186,6 +180,12 @@ TH2F *hX1vschi = new TH2F("hX1vschi","X1pos vs chisq", 800,0,800, 200,0,1);
 TH2F *hhitsvshits = new TH2F("hhitsvshits","Hits vs Hits",20,0.,20.,20,0.,20.);
 
 TH2F *hX1dtvsX = new TH2F("hX1dtvsX","X1 offset corrected drifttime vs X1pos",800,0.,800.,150,0.,15000.);
+
+// To check for TDC offsets with chained data, define the TDC offsets histograms
+
+TH2F *hChanVsTimeOffsetPID = new TH2F("hChanVsOffsetTimePID","TDC channel vs time (cablelengths offsets incl) PID selected", 3000, 0, 6000, 896, 0, 896);
+
+TH2F *hWireVsTimeOffsetPID = new TH2F("hWireVsOffsetTimePID","Wire channel vs time (cablelengths offsets incl) PID selected", 3000, 0, 6000, 1000, 0, 1000);
 
 
 }
